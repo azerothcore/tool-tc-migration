@@ -1,13 +1,4 @@
-ALTER TABLE character_spell DROP COLUMN `active`;
-ALTER TABLE character_spell DROP COLUMN `disabled`;
-ALTER TABLE character_spell ADD `specMask` tinyint(3) unsigned NOT NULL DEFAULT 255;
-
-TRUNCATE TABLE character_talent;
-TRUNCATE TABLE character_aura;
--- ALTER TABLE character_talent CHANGE `spec` `specMask` tinyint(3) unsigned NOT NULL DEFAULT 0;
-
-UPDATE characters SET speccount=1 WHERE speccount=0;
-
+UPDATE characters SET talentGroupsCount=1 WHERE talentGroupsCount=0;
 
 DELETE s FROM character_spell s JOIN __del_ability_spell t ON s.spell=t.spell; -- Remove all spells from spellability.dbc
 DELETE s FROM character_spell s JOIN __del_override_spell t ON s.spell=t.spell; -- Remove all spells from overridespell.dbc
@@ -18,7 +9,6 @@ DELETE s FROM character_spell s JOIN __playercreateinfo_spell t ON s.spell=t.spe
 DELETE s FROM character_spell s JOIN __profession_autolearn t ON s.spell=t.spell; -- Remove all spells that are automatically learned from certain skill level
 DELETE s FROM character_spell s JOIN characters c ON s.guid = c.guid WHERE s.spell = 674 AND c.class = 7; -- Remove Dual Wield From shamans
 DELETE s FROM character_spell s JOIN __del_talent_pyroblast t1 ON s.spell=t1.spell LEFT JOIN __del_talent_pyroblast2 t2 ON t1.spell=t2.spell WHERE t2.spell IS NULL;
-
 
 -- restore lower ranks not saved (dependant was not saved)
 INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell_id, 255 FROM character_spell s JOIN __spell_ranks t ON s.spell = t.spell_id JOIN __spell_ranks t2 ON t.first_spell_id=t2.first_spell_id AND (t.rank-1)=t2.rank WHERE t.rank=16);
@@ -37,10 +27,8 @@ INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell_id, 255 FROM charact
 INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell_id, 255 FROM character_spell s JOIN __spell_ranks t ON s.spell = t.spell_id JOIN __spell_ranks t2 ON t.first_spell_id=t2.first_spell_id AND (t.rank-1)=t2.rank WHERE t.rank=3);
 INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell_id, 255 FROM character_spell s JOIN __spell_ranks t ON s.spell = t.spell_id JOIN __spell_ranks t2 ON t.first_spell_id=t2.first_spell_id AND (t.rank-1)=t2.rank WHERE t.rank=2);
 
-
 UPDATE character_spell SET specMask=255; -- Set specMask of all spells to 255
 UPDATE character_spell s JOIN __del_talent_pyroblast t ON s.spell=t.spell SET specMask=0; -- Set specMask to 0 for spells added to spellbook
-
 
 -- Add missing profession spells
 INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell, 255 FROM character_spell s JOIN __profession_skill t ON s.spell = t.spell JOIN __profession_skill t2 ON t.skill=t2.skill AND (t.rank-1)=t2.rank WHERE t.rank=6);
@@ -48,7 +36,6 @@ INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell, 255 FROM character_
 INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell, 255 FROM character_spell s JOIN __profession_skill t ON s.spell = t.spell JOIN __profession_skill t2 ON t.skill=t2.skill AND (t.rank-1)=t2.rank WHERE t.rank=4);
 INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell, 255 FROM character_spell s JOIN __profession_skill t ON s.spell = t.spell JOIN __profession_skill t2 ON t.skill=t2.skill AND (t.rank-1)=t2.rank WHERE t.rank=3);
 INSERT IGNORE INTO character_spell (SELECT s.guid, t2.spell, 255 FROM character_spell s JOIN __profession_skill t ON s.spell = t.spell JOIN __profession_skill t2 ON t.skill=t2.skill AND (t.rank-1)=t2.rank WHERE t.rank=2);
-
 
 -- Insert skill if missing (core would do this, but we need it for the queries below)
 INSERT IGNORE INTO character_skills (SELECT s.guid, t.skill, 1, t.maxvalue FROM __profession_skill t JOIN character_spell s ON t.spell = s.spell WHERE t.rank=6);
@@ -58,7 +45,6 @@ INSERT IGNORE INTO character_skills (SELECT s.guid, t.skill, 1, t.maxvalue FROM 
 INSERT IGNORE INTO character_skills (SELECT s.guid, t.skill, 1, t.maxvalue FROM __profession_skill t JOIN character_spell s ON t.spell = s.spell WHERE t.rank=2);
 INSERT IGNORE INTO character_skills (SELECT s.guid, t.skill, 1, t.maxvalue FROM __profession_skill t JOIN character_spell s ON t.spell = s.spell WHERE t.rank=1);
 
-
 -- Update max allowed skill based on spells
 UPDATE character_skills cs JOIN __profession_skill t ON cs.skill = t.skill LEFT JOIN character_spell s ON cs.guid = s.guid AND t.spell = s.spell SET cs.max=(t.maxvalue-75) WHERE t.rank=6 AND s.guid IS NULL AND cs.max > (t.maxvalue-75);
 UPDATE character_skills cs JOIN __profession_skill t ON cs.skill = t.skill LEFT JOIN character_spell s ON cs.guid = s.guid AND t.spell = s.spell SET cs.max=(t.maxvalue-75) WHERE t.rank=5 AND s.guid IS NULL AND cs.max > (t.maxvalue-75);
@@ -66,15 +52,14 @@ UPDATE character_skills cs JOIN __profession_skill t ON cs.skill = t.skill LEFT 
 UPDATE character_skills cs JOIN __profession_skill t ON cs.skill = t.skill LEFT JOIN character_spell s ON cs.guid = s.guid AND t.spell = s.spell SET cs.max=(t.maxvalue-75) WHERE t.rank=3 AND s.guid IS NULL AND cs.max > (t.maxvalue-75);
 UPDATE character_skills cs JOIN __profession_skill t ON cs.skill = t.skill LEFT JOIN character_spell s ON cs.guid = s.guid AND t.spell = s.spell SET cs.max=(t.maxvalue-75) WHERE t.rank=2 AND s.guid IS NULL AND cs.max > (t.maxvalue-75);
 UPDATE character_skills cs JOIN __profession_skill t ON cs.skill = t.skill LEFT JOIN character_spell s ON cs.guid = s.guid AND t.spell = s.spell SET cs.max=(t.maxvalue-75) WHERE t.rank=1 AND s.guid IS NULL AND cs.max > (t.maxvalue-75);
-DELETE FROM character_skills WHERE max=0;
-UPDATE character_skills SET value=max WHERE value>max;
-
+DELETE FROM character_skills WHERE MAX=0;
+UPDATE character_skills SET VALUE=MAX WHERE VALUE>MAX;
 
 -- Remove primary professions when having more than 2!
 -- first delete skill
 SET @cnt := 0;
 SET @prevguid := 0;
-DELETE s FROM character_skills s JOIN ((SELECT guid, skill FROM ((SELECT IF(@prevguid <> cs.guid, @cnt := 1, @cnt := @cnt+1) AS cnt, (@prevguid := guid) AS guid, cs.skill AS skill FROM character_skills cs JOIN __profession_skill t ON cs.skill = t.skill AND t.rank=6 ORDER BY cs.guid, cs.skill) x) WHERE cnt>2) x2) ON s.guid = x2.guid AND s.skill = x2.skill;
+DELETE s FROM character_skills s JOIN ((SELECT guid, skill FROM ((SELECT IF(@prevguid <> cs.guid, @cnt := 1, @cnt := @cnt+1) AS cnt, (@prevguid := guid) AS guid, cs.skill AS skill FROM character_skills cs JOIN __profession_skill t ON cs.skill = t.skill AND t.rank=6 ORDER BY cs.guid, cs.skill) X) WHERE cnt>2) x2) ON s.guid = x2.guid AND s.skill = x2.skill;
 -- now delete main profession spells if skill is missing
 DELETE s FROM character_spell s JOIN __profession_skill t ON s.spell = t.spell LEFT JOIN character_skills cs ON s.guid = cs.guid AND t.skill = cs.skill WHERE cs.guid IS NULL;
 
@@ -126,27 +111,22 @@ DELETE s FROM character_spell s JOIN character_spell s2 ON s.guid = s2.guid AND 
 -- Engineering
 DELETE s FROM character_spell s JOIN character_spell s2 ON s.guid = s2.guid AND s2.spell=20219 WHERE s.spell=20222;
 
-
 -- Remove spells missing their required spell
 -- Run 3 times: first - normal specialty is removed, second - recipes from specialty and specialty of specialty (blacksmithing only), third - recipes of specialty of specialty
 DELETE s FROM character_spell s JOIN __profession_spell_req_spell t ON s.spell = t.spell LEFT JOIN character_spell s2 ON s.guid = s2.guid AND s2.spell=t.reqspell WHERE s2.guid IS NULL;
 DELETE s FROM character_spell s JOIN __profession_spell_req_spell t ON s.spell = t.spell LEFT JOIN character_spell s2 ON s.guid = s2.guid AND s2.spell=t.reqspell WHERE s2.guid IS NULL;
 DELETE s FROM character_spell s JOIN __profession_spell_req_spell t ON s.spell = t.spell LEFT JOIN character_spell s2 ON s.guid = s2.guid AND s2.spell=t.reqspell WHERE s2.guid IS NULL;
 
-
 -- Remove spells missing their required skill (the same spells are removed when setting skill to 0)
 DELETE s FROM character_spell s JOIN __profession_spell_req_skill t ON s.spell = t.spell LEFT JOIN character_skills cs ON s.guid = cs.guid AND t.reqskill = cs.skill WHERE cs.guid IS NULL;
 
-
 -- GBoS fix
-update character_spell s left join character_talent t on s.guid = t.guid and t.spell = 20911 set s.specMask=0 where s.spell = 25899 and t.guid IS NULL;
-update character_spell s join character_talent t on s.guid = t.guid and t.spell = 20911 set s.specMask=t.specMask where s.spell = 25899;
-
+UPDATE character_spell s LEFT JOIN character_talent t ON s.guid = t.guid AND t.spell = 20911 SET s.specMask=0 WHERE s.spell = 25899 AND t.guid IS NULL;
+UPDATE character_spell s JOIN character_talent t ON s.guid = t.guid AND t.spell = 20911 SET s.specMask=t.specMask WHERE s.spell = 25899;
 
 -- add activation spells to all characters with dual spec
 REPLACE INTO character_spell
-SELECT guid,63645,255 FROM characters WHERE speccount>1;
+SELECT guid,63645,255 FROM characters WHERE talentGroupsCount>1;
 
 REPLACE INTO character_spell
-SELECT guid,63644,255 FROM characters WHERE speccount>1;
-
+SELECT guid,63644,255 FROM characters WHERE talentGroupsCount>1;
