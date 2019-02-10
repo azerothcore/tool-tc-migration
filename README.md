@@ -2,7 +2,7 @@
 
 **[EXPERIMENTAL]**
 
-Some tools to migrate from TrinityCore to AzerothCore.
+Some tools to migrate the `characters` database from TrinityCore to AzerothCore.
 
 **IMPORTANT**: backup your database **before** using this tool.
 
