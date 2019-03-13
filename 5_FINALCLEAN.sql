@@ -1,8 +1,3 @@
-
--- Primary cleanup of characters database
-USE rocket_characters;
-
-
 -- 4. Cleanup tabels referencing characters.guid
 DELETE FROM auctionhouse WHERE itemowner NOT IN (SELECT guid FROM characters);
 DELETE FROM character_account_data WHERE guid NOT IN (SELECT guid FROM characters);
@@ -107,8 +102,3 @@ REPLACE INTO items_temp SELECT item_guid FROM guild_bank_item;
 REPLACE INTO items_temp SELECT item_guid FROM mail_items;
 DELETE FROM item_instance WHERE guid NOT IN (SELECT guid FROM items_temp);
 DROP TABLE items_temp;
-
-
--- mysqlcheck -u trinity -p auth -o -c -a
--- mysqlcheck -u trinity -p world -o -c -a
--- mysqlcheck -u trinity -p characters -o -c -a
