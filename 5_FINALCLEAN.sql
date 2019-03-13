@@ -108,6 +108,6 @@ REPLACE INTO items_temp SELECT item_guid FROM mail_items;
 DELETE FROM item_instance WHERE guid NOT IN (SELECT guid FROM items_temp);
 DROP TABLE items_temp;
 
--- mysqlcheck -u trinity -p love_auth -o -c -a
--- mysqlcheck -u trinity -p love_world -o -c -a
--- mysqlcheck -u trinity -p rocket_characters -o -c -a
+-- mysqlcheck -u trinity -p auth -o -c -a
+-- mysqlcheck -u trinity -p world -o -c -a
+-- mysqlcheck -u trinity -p characters -o -c -a
