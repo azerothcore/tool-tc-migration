@@ -8,3 +8,4 @@ Some tools to migrate the `characters` database from TrinityCore to AzerothCore.
 
 We cannot guarantee that the operation succeeds without side effects.
 
+#Instructions (http://www.azerothcore.org/wiki/TrinityCore-to-AzerothCore-characters-migration).
