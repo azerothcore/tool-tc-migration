@@ -8,4 +8,6 @@ Some tools to migrate the `characters` and `auth` database from TrinityCore to A
 
 We cannot guarantee that the operation succeeds without side effects.
 
-#Instructions (http://www.azerothcore.org/wiki/TrinityCore-to-AzerothCore-characters-migration).
+## Instructions
+
+http://www.azerothcore.org/wiki/TrinityCore-to-AzerothCore-characters-migration
