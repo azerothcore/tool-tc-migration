@@ -32,7 +32,7 @@ DELETE FROM character_stats WHERE guid NOT IN (SELECT guid FROM characters);
 DELETE FROM character_talent WHERE guid NOT IN (SELECT guid FROM characters);
 DELETE FROM corpse WHERE guid NOT IN (SELECT guid FROM characters);
 DELETE FROM gm_tickets WHERE guid NOT IN (SELECT guid FROM characters);
--- DELETE FROM item_instance WHERE owner_guid <> 0 AND owner_guid NOT IN (SELECT guid FROM characters);
+DELETE FROM item_instance WHERE owner_guid <> 0 AND owner_guid NOT IN (SELECT guid FROM characters);
 DELETE FROM item_refund_instance WHERE player_guid NOT IN (SELECT guid FROM characters);
 DELETE FROM mail WHERE sender NOT IN (SELECT guid FROM characters) AND messageType = 0;
 DELETE FROM mail WHERE receiver NOT IN (SELECT guid FROM characters);
