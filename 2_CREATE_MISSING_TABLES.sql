@@ -1,3 +1,33 @@
+CREATE DATABASE IF NOT EXISTS `characters` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `characters`;
+
+CREATE TABLE IF NOT EXISTS `recovery_item` (
+  `Id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `Guid` int(11) unsigned NOT NULL DEFAULT '0',
+  `ItemEntry` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `Count` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id`),
+  KEY `idx_guid` (`Guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `gameobject_respawn` (
+  `guid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Global Unique Identifier',
+  `respawnTime` int(10) unsigned NOT NULL DEFAULT '0',
+  `mapId` smallint(10) unsigned NOT NULL DEFAULT '0',
+  `instanceId` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Instance Identifier',
+  PRIMARY KEY (`guid`,`instanceId`),
+  KEY `idx_instance` (`instanceId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Grid Loading System';
+
+CREATE TABLE IF NOT EXISTS `creature_respawn` (
+  `guid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Global Unique Identifier',
+  `respawnTime` int(10) unsigned NOT NULL DEFAULT '0',
+  `mapId` smallint(10) unsigned NOT NULL DEFAULT '0',
+  `instanceId` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Instance Identifier',
+  PRIMARY KEY (`guid`,`instanceId`),
+  KEY `idx_instance` (`instanceId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Grid Loading System';
+
 CREATE TABLE `character_brew_of_the_month` (
   `guid` INT(10) UNSIGNED NOT NULL,
   `lastEventId` INT(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -149,3 +179,4 @@ LOCK TABLES `channels_rights` WRITE;
 /*!40000 ALTER TABLE `channels_rights` DISABLE KEYS */;
 /*!40000 ALTER TABLE `channels_rights` ENABLE KEYS */;
 UNLOCK TABLES;
+
