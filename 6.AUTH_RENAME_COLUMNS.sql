@@ -1,5 +1,3 @@
-ALTER TABLE `account`
-		ADD COLUMN `totaltime` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `recruiter`;
 
 DROP PROCEDURE IF EXISTS change_column_name;
 DELIMITER //
@@ -14,6 +12,7 @@ BEGIN
     THEN
         ALTER TABLE account_access CHANGE SecurityLevel gmlevel tinyint(3) unsigned;
     END IF;
+
     IF EXISTS(SELECT NULL
             FROM information_schema.columns
             WHERE table_schema = database()
@@ -22,6 +21,16 @@ BEGIN
     )
     THEN
         ALTER TABLE account_access CHANGE AccountID id int(10) unsigned;
+    END IF;
+
+    IF EXISTS(SELECT NULL
+            FROM information_schema.columns
+            WHERE table_schema = database()
+            AND table_name = 'account'
+            AND column_name = 'session_key_auth'
+    )
+    THEN
+        ALTER TABLE account CHANGE session_key_auth session_key binary(40);
     END IF;
 END;
 //
