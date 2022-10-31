@@ -37,3 +37,5 @@ END;
 DELIMITER ;
 CALL change_column_name();
 DROP PROCEDURE change_column_name;
+
+ALTER TABLE account DROP COLUMN session_key_bnet;

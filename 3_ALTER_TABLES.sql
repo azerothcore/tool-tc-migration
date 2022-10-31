@@ -32,22 +32,4 @@ ALTER TABLE character_spell DROP COLUMN `disabled`;
 ALTER TABLE character_spell ADD `specMask` TINYINT(3) UNSIGNED NOT NULL DEFAULT 255;
 
 -- characters
-DROP PROCEDURE IF EXISTS add_columns_if_not_exists;
-DELIMITER //
-CREATE PROCEDURE add_columns_if_not_exists()
-BEGIN
-    -- adds characters.order this column seems to have no equivalent in TrinityCore
-    IF NOT EXISTS(SELECT NULL
-            FROM information_schema.columns
-            WHERE table_schema = database()
-            AND table_name = 'characters'
-            AND column_name = 'order'
-    )
-    THEN
-        ALTER TABLE characters ADD `order` tinyint(4) NULL AFTER grantableLevels;
-    END IF;
-END;
-//
-DELIMITER ;
-CALL add_columns_if_not_exists();
-DROP PROCEDURE add_columns_if_not_exists;
+ALTER TABLE characters ADD `order` tinyint(4) NULL AFTER grantableLevels;

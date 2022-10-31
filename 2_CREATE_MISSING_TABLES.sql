@@ -100,8 +100,16 @@ CREATE TABLE `item_loot_storage` (
   `containerGUID` INT(10) UNSIGNED NOT NULL,
   `itemid` INT(10) UNSIGNED NOT NULL,
   `count` INT(10) UNSIGNED NOT NULL,
+  `item_index` int(10) unsigned default 0 not null,
   `randomPropertyId` INT(10) NOT NULL,
-  `randomSuffix` INT(10) UNSIGNED NOT NULL
+  `randomSuffix` INT(10) UNSIGNED NOT NULL,
+  `follow_loot_rules` tinyint(3) unsigned not null,
+  `freeforall` tinyint(3) unsigned not null,
+  `is_blocked` tinyint(3) unsigned not null,
+  `is_counted` tinyint(3) unsigned not null,
+  `is_underthreshold` tinyint(3) unsigned not null,
+  `needs_quest` tinyint(3) unsigned not null,
+  `conditionLootId` int(11) default 0 not null
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `character_entry_point` (
@@ -111,10 +119,12 @@ CREATE TABLE `character_entry_point` (
   `joinZ` FLOAT NOT NULL DEFAULT '0',
   `joinO` FLOAT NOT NULL DEFAULT '0',
   `joinMapId` INT(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Map Identifier',
-  `taxiPath` TEXT,
+  `taxiPath0` INT(10) UNSIGNED DEFAULT 0 NOT NULL,
+  `taxiPath1` INT(10) UNSIGNED DEFAULT 0 NOT NULL,
   `mountSpell` INT(10) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='Player System';
+
 
 CREATE TABLE `channels_bans` (
   `channelId` INT(10) UNSIGNED NOT NULL,
@@ -145,7 +155,76 @@ CREATE TABLE `channels_rights` (
 -- Dumping data for table `channels_rights`
 --
 
+
 LOCK TABLES `channels_rights` WRITE;
 /*!40000 ALTER TABLE `channels_rights` DISABLE KEYS */;
 /*!40000 ALTER TABLE `channels_rights` ENABLE KEYS */;
 UNLOCK TABLES;
+
+---
+--- character_settings
+---
+create table character_settings
+(
+	guid int(10) unsigned not null,
+	source varchar(40) not null,
+	data text null,
+	primary key (guid, source)
+)
+ ENGINE=INNODB DEFAULT CHARSET=utf8 comment 'Player Settings';
+
+---
+--- game_event_condition_save
+---
+create table if not exists game_event_condition_save
+(
+	eventEntry tinyint(3) unsigned not null,
+	condition_id int(10) unsigned default 0 not null,
+	done float default 0 null,
+	primary key (eventEntry, condition_id)
+);
+
+
+---
+--- creature_respawn
+---
+create table creature_respawn
+(
+	guid int(10) unsigned default 0 not null comment 'Global Unique Identifier',
+	respawnTime int(10) unsigned default 0 not null,
+	mapId smallint(5) unsigned default 0 not null,
+	instanceId int(10) unsigned default 0 not null comment 'Instance Identifier',
+	primary key (guid, instanceId)
+)
+ ENGINE=INNODB DEFAULT CHARSET=utf8 comment 'Grid Loading System';
+
+create index idx_instance
+	on creature_respawn (instanceId);
+
+---
+--- gameobject_respawn
+---
+create table gameobject_respawn
+(
+	guid int(10) unsigned default 0 not null comment 'Global Unique Identifier',
+	respawnTime int(10) unsigned default 0 not null,
+	mapId smallint(5) unsigned default 0 not null,
+	instanceId int(10) unsigned default 0 not null comment 'Instance Identifier',
+	primary key (guid, instanceId)
+)
+ ENGINE=INNODB DEFAULT CHARSET=utf8 comment 'Grid Loading System';
+
+create index idx_instance
+	on gameobject_respawn (instanceId);
+
+---
+--- instance_saved_go_state_data
+---
+create table instance_saved_go_state_data
+(
+	id int(10) unsigned not null comment 'instance.id',
+	guid int(10) unsigned not null comment 'gameobject.guid',
+	state tinyint(3) unsigned default 0 null comment 'gameobject.state',
+	primary key (id, guid)
+);
+
