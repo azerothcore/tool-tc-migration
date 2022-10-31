@@ -11222,3 +11222,6 @@ INSERT INTO `__spell_ranks` VALUES ('66215', '66979', '6');
 INSERT INTO `__spell_ranks` VALUES ('75593', '75593', '1');
 INSERT INTO `__spell_ranks` VALUES ('75593', '75446', '2');
 INSERT INTO `__spell_ranks` VALUES ('75593', '75447', '3');
+
+
+ALTER TABLE `characters` ADD COLUMN `innTriggerId` INT UNSIGNED NOT NULL AFTER `deleteDate`;

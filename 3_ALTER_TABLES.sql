@@ -1,10 +1,6 @@
 -- character_spell_cooldown
 ALTER TABLE `character_spell_cooldown` ADD COLUMN `needSend` TINYINT(3) UNSIGNED NOT NULL DEFAULT '1' AFTER `categoryEnd`;
 
--- auctionhouse
--- TODO: not sure if this is enough, those fields have different meanings: https://github.com/azerothcore/azerothcore-wotlk/issues/1239
-ALTER TABLE `auctionhouse` CHANGE COLUMN `houseid` `auctioneerguid` INT(10) UNSIGNED NOT NULL DEFAULT '0' ;
-
 -- channels
 ALTER TABLE `channels` 
 ADD COLUMN `channelId` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
@@ -34,3 +30,24 @@ ADD PRIMARY KEY (`corpseGuid`, `guid`);
 ALTER TABLE character_spell DROP COLUMN `active`;
 ALTER TABLE character_spell DROP COLUMN `disabled`;
 ALTER TABLE character_spell ADD `specMask` TINYINT(3) UNSIGNED NOT NULL DEFAULT 255;
+
+-- characters
+DROP PROCEDURE IF EXISTS add_columns_if_not_exists;
+DELIMITER //
+CREATE PROCEDURE add_columns_if_not_exists()
+BEGIN
+    -- adds characters.order this column seems to have no equivalent in TrinityCore
+    IF NOT EXISTS(SELECT NULL
+            FROM information_schema.columns
+            WHERE table_schema = database()
+            AND table_name = 'characters'
+            AND column_name = 'order'
+    )
+    THEN
+        ALTER TABLE characters ADD `order` tinyint(4) NULL AFTER grantableLevels;
+    END IF;
+END;
+//
+DELIMITER ;
+CALL add_columns_if_not_exists();
+DROP PROCEDURE add_columns_if_not_exists;

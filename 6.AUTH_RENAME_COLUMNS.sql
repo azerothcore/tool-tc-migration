@@ -36,4 +36,4 @@ END;
 //
 DELIMITER ;
 CALL change_column_name();
-DROP PROCEDURE IF EXISTS change_column_name;
+DROP PROCEDURE change_column_name;
