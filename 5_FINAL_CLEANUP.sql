@@ -109,6 +109,16 @@ DROP TABLE auctionbidders;
 --
 DROP TABLE IF EXISTS character_battleground_data;
 
+--
+-- This table is removed from AzerothCore (the doc is not up to date https://www.azerothcore.org/wiki/item_loot_items)
+--
+DROP TABLE IF EXISTS item_loot_items;
+
+--
+-- This table is removed from AzerothCore (the doc is not up to date https://www.azerothcore.org/wiki/item_loot_money)
+--
+DROP TABLE IF EXISTS item_loot_money;
+
 DROP TABLE IF EXISTS character_fishingsteps;
 DROP TABLE IF EXISTS gm_subsurveys;
 
