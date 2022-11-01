@@ -78,28 +78,6 @@ CREATE TABLE IF NOT EXISTS `gm_survey` (
   PRIMARY KEY (`surveyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Player System';
 
-CREATE TABLE `gm_tickets` (
-  `ticketId` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `guid` INT(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Global Unique Identifier of ticket creator',
-  `name` VARCHAR(12) NOT NULL COMMENT 'Name of ticket creator',
-  `message` TEXT NOT NULL,
-  `createTime` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  `mapId` SMALLINT(5) UNSIGNED NOT NULL DEFAULT '0',
-  `posX` FLOAT NOT NULL DEFAULT '0',
-  `posY` FLOAT NOT NULL DEFAULT '0',
-  `posZ` FLOAT NOT NULL DEFAULT '0',
-  `lastModifiedTime` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  `closedBy` INT(10) NOT NULL DEFAULT '0',
-  `assignedTo` INT(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'GUID of admin to whom ticket is assigned',
-  `comment` TEXT NOT NULL,
-  `response` TEXT NOT NULL,
-  `completed` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
-  `escalated` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
-  `viewed` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
-  `haveTicket` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ticketId`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='Player System';
-
 CREATE TABLE `item_loot_storage` (
   `containerGUID` INT(10) UNSIGNED NOT NULL,
   `itemid` INT(10) UNSIGNED NOT NULL,

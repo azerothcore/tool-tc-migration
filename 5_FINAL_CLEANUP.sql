@@ -31,7 +31,6 @@ DELETE FROM character_spell_cooldown WHERE guid NOT IN (SELECT guid FROM charact
 DELETE FROM character_stats WHERE guid NOT IN (SELECT guid FROM characters);
 DELETE FROM character_talent WHERE guid NOT IN (SELECT guid FROM characters);
 DELETE FROM corpse WHERE guid NOT IN (SELECT guid FROM characters);
-DELETE FROM gm_tickets WHERE guid NOT IN (SELECT guid FROM characters);
 DELETE FROM item_instance WHERE owner_guid <> 0 AND owner_guid NOT IN (SELECT guid FROM characters);
 DELETE FROM item_refund_instance WHERE player_guid NOT IN (SELECT guid FROM characters);
 DELETE FROM mail WHERE sender NOT IN (SELECT guid FROM characters) AND messageType = 0;
@@ -102,3 +101,14 @@ REPLACE INTO items_temp SELECT item_guid FROM guild_bank_item;
 REPLACE INTO items_temp SELECT item_guid FROM mail_items;
 DELETE FROM item_instance WHERE guid NOT IN (SELECT guid FROM items_temp);
 DROP TABLE items_temp;
+
+DROP TABLE auctionbidders;
+
+--
+-- This table is removed from AzerothCore (the doc is not up to date https://www.azerothcore.org/wiki/character_battleground_data)
+--
+DROP TABLE IF EXISTS character_battleground_data;
+
+DROP TABLE IF EXISTS character_fishingsteps;
+DROP TABLE IF EXISTS gm_subsurveys;
+

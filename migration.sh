@@ -36,13 +36,19 @@ Restore()
 
 Migrate()
 {
-  /usr/bin/mysql --database="${CHARACTERS_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./1_CREATE_CLEANUP_TABLES.sql
-  /usr/bin/mysql --database="${CHARACTERS_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./2_CREATE_MISSING_TABLES.sql
-  /usr/bin/mysql --database="${CHARACTERS_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./3_ALTER_TABLES.sql
-  /usr/bin/mysql --database="${CHARACTERS_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./4_CLEANUP_AND_CONVERT_SPELLS.sql
-  /usr/bin/mysql --database="${CHARACTERS_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./5_FINAL_CLEANUP.sql
-  /usr/bin/mysql --database="${AUTH_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./6.AUTH_RENAME_COLUMNS.sql
-  /usr/bin/mysql --database="${AUTH_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./7.AUTH_CLEAN_AND_CONVERTER.sql
+  MIGRATION_FILE=('1_CREATE_CLEANUP_TABLES' '2_CREATE_MISSING_TABLES' '3_ALTER_TABLES' '4_CLEANUP_AND_CONVERT_SPELLS' '5_FINAL_CLEANUP')
+  for file_name in "${MIGRATION_FILE[@]}"
+  do
+    echo "Execute: $file_name"
+    /usr/bin/mysql --database="${CHARACTERS_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./"${file_name}".sql
+  done
+
+  MIGRATION_FILE=('6.AUTH_RENAME_COLUMNS' '7.AUTH_CLEAN_AND_CONVERTER')
+  for file_name in "${MIGRATION_FILE[@]}"
+  do
+    echo "Execute: $file_name"
+    /usr/bin/mysql --database="${AUTH_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./"${file_name}".sql
+  done
 }
 
 ############################################################
