@@ -5,13 +5,13 @@
 Help()
 {
    # Display Help
-   echo "Add description of the script functions here."
+   echo "Restore & migrate TrinityCore DB to AzerothCore DB"
    echo
-   echo "Syntax: scriptTemplate [-g|h|v|V]"
+   echo "Syntax: scriptTemplate [-a|-r|-m]"
    echo "options:"
-   echo "g     Print the GPL license notification."
-   echo "h     Print this Help."
-   echo "v     Verbose mode."
+   echo "a     Restore and migrate DB"
+   echo "r     REstore original TrinityCore DB"
+   echo "m     Migrate TrinityCore DB to AzerothCore DB"
    echo "V     Print software version and exit."
    echo
 }
@@ -42,16 +42,11 @@ Migrate()
   /usr/bin/mysql --database="${CHARACTERS_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./4_CLEANUP_AND_CONVERT_SPELLS.sql
   /usr/bin/mysql --database="${CHARACTERS_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./5_FINAL_CLEANUP.sql
   /usr/bin/mysql --database="${AUTH_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./6.AUTH_RENAME_COLUMNS.sql
-  /usr/bin/mysql --database="${AUTH_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./7.AUTH_CONVERTER.sql
+  /usr/bin/mysql --database="${AUTH_DB}" --user="${DB_USER}" --password="${DB_PASS}" --host="${DB_HOSTNAME}" --port="${DB_PORT}" < ./7.AUTH_CLEAN_AND_CONVERTER.sql
 }
 
 ############################################################
-############################################################
 # Main program                                             #
-############################################################
-############################################################
-############################################################
-# Process the input options. Add options as needed.        #
 ############################################################
 # Get the options
 while getopts ":hrma" option; do
@@ -74,8 +69,4 @@ while getopts ":hrma" option; do
          exit;;
    esac
 done
-
-
-echo "hello world!"
-
 # migrate dbs
