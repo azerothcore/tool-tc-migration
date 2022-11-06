@@ -51,3 +51,17 @@ ALTER TABLE `log_money` ADD COLUMN `type` TINYINT NOT NULL COMMENT '1=COD,2=AH,3
 
 --
 ALTER TABLE auctionhouse DROP COLUMN `Flags`;
+
+--
+ALTER TABLE pet_aura DROP COLUMN `critChance`;
+ALTER TABLE pet_aura DROP COLUMN `applyResilience`;
+
+--
+ALTER TABLE character_aura DROP COLUMN `critChance`;
+ALTER TABLE character_aura DROP COLUMN `applyResilience`;
+
+--
+ALTER TABLE channels DROP COLUMN `bannedList`;
+
+--
+ALTER TABLE corpse DROP COLUMN `corpseGuid`;

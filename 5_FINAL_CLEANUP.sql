@@ -121,4 +121,5 @@ DROP TABLE IF EXISTS item_loot_money;
 
 DROP TABLE IF EXISTS character_fishingsteps;
 DROP TABLE IF EXISTS gm_subsurveys;
-
+DROP TABLE IF EXISTS respawn;
+DROP TABLE IF EXISTS group_instance;
