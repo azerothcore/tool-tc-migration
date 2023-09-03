@@ -46,11 +46,12 @@ DELETE FROM petition_sign WHERE playerguid NOT IN (SELECT guid FROM characters);
 -- 5.2. Delete inexistent group members
 DELETE FROM group_member WHERE memberGuid NOT IN (SELECT guid FROM characters);
 -- 5.3. Delete members for inexistent groups
-DELETE FROM group_member WHERE guid NOT IN (SELECT guid FROM groups);
+DELETE FROM group_member WHERE guid NOT IN (SELECT guid FROM `groups`);
 -- 5.4. Delete empty groups
 DELETE FROM groups WHERE guid NOT IN (SELECT guid FROM group_member);
 -- 5.5. Delete referencing data for inexistent groups
-DELETE FROM group_instance WHERE guid NOT IN (SELECT guid FROM groups);
+DELETE FROM group_instance WHERE guid NOT IN (SELECT guid FROM `groups`);
+
 
 -- 6. Cleanup guild tables
 -- 6.1. Delete guilds with inexistent leader
