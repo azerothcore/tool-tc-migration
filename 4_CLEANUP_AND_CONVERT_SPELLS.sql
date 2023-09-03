@@ -59,7 +59,20 @@ UPDATE character_skills SET VALUE=MAX WHERE VALUE>MAX;
 -- first delete skill
 SET @cnt := 0;
 SET @prevguid := 0;
-DELETE s FROM character_skills s JOIN ((SELECT guid, skill FROM ((SELECT IF(@prevguid <> cs.guid, @cnt := 1, @cnt := @cnt+1) AS cnt, (@prevguid := guid) AS guid, cs.skill AS skill FROM character_skills cs JOIN __profession_skill t ON cs.skill = t.skill AND t.rank=6 ORDER BY cs.guid, cs.skill) X) WHERE cnt>2) x2) ON s.guid = x2.guid AND s.skill = x2.skill;
+DELETE s FROM character_skills s 
+JOIN (
+    SELECT guid, skill        
+    FROM (
+        SELECT IF(@prevguid <> cs.guid, @cnt := 1, @cnt := @cnt+1) AS cnt, 
+               (@prevguid := guid) AS guid,
+               cs.skill AS skill 
+        FROM character_skills cs 
+        JOIN __profession_skill t ON cs.skill = t.skill AND t.rank=6
+        ORDER BY cs.guid, cs.skill
+    ) AS X
+    WHERE cnt > 2            
+) AS Y  -- This is the alias for the outer query
+ON s.guid = Y.guid AND s.skill = Y.skill;
 -- now delete main profession spells if skill is missing
 DELETE s FROM character_spell s JOIN __profession_skill t ON s.spell = t.spell LEFT JOIN character_skills cs ON s.guid = cs.guid AND t.skill = cs.skill WHERE cs.guid IS NULL;
 
